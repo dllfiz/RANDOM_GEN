@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>运行环境自检 · 提示词生成器</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#fff; --line:#e3e6ea; --fg:#1b1f24; --dim:#5c6672;
+    --ok:#137333; --okbg:#e6f4ea; --warn:#8a5300; --warnbg:#fef7e0; --err:#b3261e; --errbg:#fce8e6;
+    --accent:#3b5bdb;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#14171a; --card:#1c2024; --line:#2c3238; --fg:#e8eaed; --dim:#9aa4ae;
+      --ok:#7ee2a0; --okbg:#16301f; --warn:#f5c877; --warnbg:#332914; --err:#ffb4ab; --errbg:#3a1c1a;
+      --accent:#8ea8ff;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:28px 18px 60px;background:var(--bg);color:var(--fg);
+    font:15px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",system-ui,sans-serif}
+  .wrap{max-width:820px;margin:0 auto}
+  h1{font-size:21px;margin:0 0 4px}
+  .sub{color:var(--dim);font-size:13px;margin:0 0 22px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:0 0 16px}
+  h2{font-size:14px;margin:0 0 12px;letter-spacing:.3px;color:var(--dim);font-weight:600}
+  .verdict{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-radius:10px;font-weight:600}
+  .verdict .ic{font-size:20px;line-height:1.3}
+  .v-ok{background:var(--okbg);color:var(--ok)}
+  .v-warn{background:var(--warnbg);color:var(--warn)}
+  .v-err{background:var(--errbg);color:var(--err)}
+  .v-note{display:block;font-weight:400;font-size:13px;margin-top:6px;opacity:.9}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  td{padding:7px 0;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:0}
+  td.k{color:var(--dim);width:44%}
+  td.v{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;word-break:break-all}
+  .tag{display:inline-block;padding:1px 7px;border-radius:5px;font-size:12px;font-weight:600;
+    font-family:inherit;margin-right:6px}
+  .t-ok{background:var(--okbg);color:var(--ok)}
+  .t-warn{background:var(--warnbg);color:var(--warn)}
+  .t-err{background:var(--errbg);color:var(--err)}
+  ol{margin:0;padding-left:22px;font-size:14px}
+  ol li{margin:0 0 8px}
+  code{background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px;
+    font-family:ui-monospace,Consolas,monospace;font-size:12.5px}
+  .muted{color:var(--dim);font-size:12.5px}
+  button{font:inherit;padding:7px 14px;border-radius:7px;border:1px solid var(--line);
+    background:var(--card);color:var(--fg);cursor:pointer}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>运行环境自检</h1>
+  <p class="sub">用来确认「双击 HTML 就能用」这件事是否成立，以及存档此刻存在哪里。此页面只读，不会修改任何数据。</p>
+
+  <div class="card" id="verdictCard">
+    <div class="verdict v-warn" id="verdict">
+      <span class="ic">…</span><span>正在检测…</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>运行环境</h2>
+    <table id="envTable"></table>
+  </div>
+
+  <div class="card">
+    <h2>本地存档清点（当前浏览器 · 当前来源）</h2>
+    <table id="storeTable"></table>
+    <p class="muted" id="storeNote" style="margin:10px 0 0"></p>
+  </div>
+
+  <div class="card">
+    <h2>换环境时怎么把存档带走</h2>
+    <ol>
+      <li><b>在原环境</b>打开 <code>index.html</code> → 左侧「仓库」→ 点 <b>↓ 备份全部存档</b>，得到一个 <code>randgen-存档-*.json</code>。</li>
+      <li>把这个 json 和整个项目文件夹一起复制到新环境（U 盘 / 网盘 / 压缩包都行）。</li>
+      <li><b>在新环境</b>打开 <code>index.html</code> → 点 <b>↑ 恢复存档</b> → 选这个 json。历史、收藏、自建角色卡、解锁状态全部回来。</li>
+      <li>角色工坊（<code>role-studio/index.html</code>）共用同一份存档，无需再导一次。</li>
+    </ol>
+    <p class="muted" style="margin:12px 0 0">
+      存档保存在浏览器里，不在项目文件夹里。所以「复制项目文件夹」本身不会带走存档，必须走上面第 1 步导出。<br>
+      <b>换浏览器也算换环境</b>：Chrome 和 Edge 各存各的，互不通用。
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>两种打开方式的区别</h2>
+    <table>
+      <tr><td class="k">本地文件<br><span class="muted">双击 index.html</span></td>
+          <td class="v" style="font-family:inherit">最省事，直接双击即可。<br>地址栏是 <code>file:///…</code>。功能完整可用。</td></tr>
+      <tr><td class="k">本地服务<br><span class="muted">python -m http.server</span></td>
+          <td class="v" style="font-family:inherit">需要装 Python，多一步。<br>地址栏是 <code>http://localhost:…</code>。<br>功能一样，但<b>存档和上面那格互相看不见</b>。</td></tr>
+    </table>
+    <p class="muted" style="margin:12px 0 0">两种方式都能正常读写存档、导出、复制。区别只在「存档放在哪个来源下」。建议固定用一种，别来回切。</p>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <button class="primary" onclick="location.reload()">重新检测</button>
+      <button onclick="window.open('index.html','_blank')">打开生成器</button>
+      <button onclick="window.open('role-studio/index.html','_blank')">打开角色工坊</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var rows = [];
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function add(tbl, k, v, cls){
+    var tb = document.getElementById(tbl);
+    var tr = document.createElement('tr');
+    var td1 = document.createElement('td'); td1.className = 'k'; td1.innerHTML = k;
+    var td2 = document.createElement('td'); td2.className = 'v';
+    if (cls) { var s = document.createElement('span'); s.className = 'tag ' + cls; s.textContent = v; td2.appendChild(s); }
+    else { td2.innerHTML = v; }
+    tr.appendChild(td1); tr.appendChild(td2); tb.appendChild(tr);
+  }
+
+  /* ---- 1. 环境 ---- */
+  var isFile = location.protocol === 'file:';
+  var secure = false;
+  try { secure = !!window.isSecureContext; } catch(e){}
+
+  add('envTable','当前地址', esc(location.href));
+  add('envTable','打开方式',
+      isFile ? '本地文件（双击打开）' : '本地服务 / 网址',
+      isFile ? 't-ok' : 't-warn');
+  add('envTable','来源 origin', esc(String(location.origin)) + ' <span class="muted">（决定存档存在哪一格）</span>');
+  add('envTable','浏览器', esc(navigator.userAgent.replace(/\s*\(.*?\)\s*/,' ').slice(0,80)));
+
+  /* ---- 2. 能力探测（真实写读删，不是看 typeof） ---- */
+  var storageOK = false, storageErr = '';
+  try {
+    localStorage.setItem('__probe__','1');
+    storageOK = localStorage.getItem('__probe__') === '1';
+    localStorage.removeItem('__probe__');
+  } catch(e){ storageErr = e.name + ': ' + e.message; }
+  add('envTable','localStorage 读写在',
+      storageOK ? '正常' : '不可用',
+      storageOK ? 't-ok' : 't-err');
+  if (!storageOK){
+    add('envTable','失败原因', esc(storageErr || '被浏览器策略阻止'));
+  }
+
+  /* ---- 3. 存档清点 ---- */
+  var KEYS = [
+    ['randgen_history','历史记录','条'],
+    ['randgen_fav','收藏','条'],
+    ['randgen_chars','自建角色卡','张']
+  ];
+  var total = 0;
+  KEYS.forEach(function(k){
+    var n = 0, bad = false;
+    if (storageOK){
+      try {
+        var raw = localStorage.getItem(k[0]);
+        if (raw){
+          var arr = JSON.parse(raw);
+          if (Array.isArray(arr)) n = arr.length; else bad = true;
+        }
+      } catch(e){ bad = true; }
+    }
+    total += n;
+    add('storeTable', k[1] + ' <span class="muted">(' + k[0] + ')</span>',
+        bad ? '内容损坏，无法解析' : (n + ' ' + k[2]),
+        bad ? 't-err' : (n > 0 ? 't-ok' : ''));
+  });
+
+  var unlocked = false;
+  if (storageOK){
+    try { unlocked = localStorage.getItem('randgen_unlock_nsfw') === '1'; } catch(e){}
+  }
+  add('storeTable','夜灯解锁状态 <span class="muted">(randgen_unlock_nsfw)</span>',
+      unlocked ? '已解锁' : '未解锁', unlocked ? 't-warn' : '');
+
+  var note = document.getElementById('storeNote');
+  if (!storageOK){
+    note.innerHTML = '⚠ 这个浏览器不让本页写入本地存储，所以上表全部为 0。生成器的历史 / 收藏也会存不下来——请改用 Chrome 或 Edge 打开本页。';
+  } else if (total === 0 && !unlocked){
+    note.textContent = '这个来源下还没有任何存档。如果你之前在别处（另一个浏览器、或本地服务方式）用过生成器，那些存档不会显示在这里，需要先用「备份全部存档」导出再「恢复存档」导进来。';
+  } else {
+    note.innerHTML = '共 <b>' + total + '</b> 条记录 + ' + (unlocked ? '已解锁' : '未解锁') + '。这些数据只存在本机浏览器里，换环境前记得导出。';
+  }
+
+  /* ---- 4. 结论 ---- */
+  var v = document.getElementById('verdict');
+  var ic = v.querySelector('.ic');
+  var tx = v.querySelector('span:last-child');
+  if (!storageOK){
+    v.className = 'verdict v-err';
+    ic.textContent = '✕';
+    tx.innerHTML = '存档功能不可用<span class="v-note">浏览器禁止了本地存储。改用 Chrome / Edge 打开即可恢复；在此之前依赖存档的功能会静默失效。</span>';
+  } else if (isFile){
+    v.className = 'verdict v-ok';
+    ic.textContent = '✓';
+    tx.innerHTML = '双击打开即可用<span class="v-note">当前以本地文件方式运行，生成、复制、导出、读写存档全部正常，不需要装任何东西、也不需要起服务器。右上角按钮可直接打开两个页面。</span>';
+  } else {
+    v.className = 'verdict v-ok';
+    ic.textContent = '✓';
+    tx.innerHTML = '运行正常<span class="v-note">当前以 ' + esc(location.origin) + ' 打开，功能完整。若想更省事，以后可以直接双击 index.html。</span>';
+  }
+})();
+</script>
+</body>
+</html>

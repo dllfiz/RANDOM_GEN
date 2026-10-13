@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>使用说明 · RANDOM GEN</title>
+<style>
+:root{
+  --bg:#f4f2ee; --card:#fff; --ink:#1d1f24; --muted:#6b7280;
+  --line:#e7e3db; --accent:#2f7fd0; --accent-soft:#e8f1fb;
+  --nsfw:#a63d55; --nsfw-soft:#fce8ee; --radius:18px; --ok:#137333;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  background:var(--bg); color:var(--ink); line-height:1.75;
+}
+.hero{
+  background:linear-gradient(135deg,#2f7fd0 0%,#6b9fe8 50%,#c478a8 100%);
+  color:#fff; padding:40px 24px 48px; text-align:center;
+}
+.hero h1{margin:0 0 8px; font-size:28px; letter-spacing:.08em}
+.hero p{margin:0 auto 18px; max-width:620px; opacity:.94; font-size:15px}
+.quick{
+  display:flex; flex-wrap:wrap; gap:10px; justify-content:center; max-width:720px; margin:0 auto;
+}
+.quick a{
+  display:inline-block; background:rgba(255,255,255,.22); color:#fff; text-decoration:none;
+  border:1px solid rgba(255,255,255,.45); border-radius:999px; padding:8px 16px; font-size:13.5px; font-weight:600;
+}
+.quick a:hover{background:rgba(255,255,255,.35)}
+.quick a.em{background:#fff; color:#2f5fbf}
+.wrap{max-width:900px; margin:-24px auto 60px; padding:0 20px}
+.toc{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:16px 20px; margin-bottom:16px; box-shadow:0 8px 28px rgba(28,30,36,.06);
+}
+.toc h2{margin:0 0 10px; font-size:15px}
+.toc ol{margin:0; padding-left:1.3em; columns:2; gap:24px; font-size:13.5px}
+@media(max-width:700px){.toc ol{columns:1}}
+.toc a{color:var(--accent); text-decoration:none}
+.toc a:hover{text-decoration:underline}
+.card{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:22px 24px; margin-bottom:16px;
+  box-shadow:0 8px 28px rgba(28,30,36,.06);
+}
+.card h2{margin:0 0 12px; font-size:18px}
+.card h3{margin:20px 0 8px; font-size:15px; color:var(--accent)}
+.card h3.nsfw{color:var(--nsfw)}
+.card p, .card li{font-size:14px; color:#333}
+.card ul, .card ol{padding-left:1.25em; margin:8px 0}
+.card li{margin:5px 0}
+.tag{
+  display:inline-block; background:var(--accent-soft); color:var(--accent);
+  border-radius:999px; padding:2px 10px; font-size:12px; font-weight:650; margin:2px 4px 2px 0;
+}
+.tag.nsfw{background:var(--nsfw-soft); color:var(--nsfw)}
+.tag.ok{background:#e6f4ea; color:var(--ok)}
+.grid{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}}
+.box{
+  border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:#fafaf8;
+}
+.box strong{display:block; margin-bottom:4px; font-size:13.5px}
+.note{
+  background:#fff8e8; border:1px solid #f0e0b8; border-radius:10px;
+  padding:10px 14px; font-size:13.5px; margin:12px 0;
+}
+.warn{
+  background:var(--nsfw-soft); border:1px solid #f0c4d0; border-radius:10px;
+  padding:10px 14px; font-size:13.5px; margin:12px 0;
+}
+table{width:100%; border-collapse:collapse; font-size:13.5px; margin:10px 0}
+th, td{border:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top}
+th{background:#f7f5f1; font-weight:600}
+kbd, code{
+  background:#f0eeea; border:1px solid var(--line); border-radius:6px;
+  padding:1px 6px; font-size:12px; font-family:ui-monospace,Consolas,monospace;
+}
+a{color:var(--accent)}
+.foot{text-align:center; color:var(--muted); font-size:12px; padding:12px 20px 40px}
+.back-top{
+  position:fixed; right:18px; bottom:18px; background:var(--accent); color:#fff;
+  border:none; border-radius:999px; padding:10px 14px; font-size:13px; cursor:pointer;
+  box-shadow:0 6px 18px rgba(47,127,208,.35); text-decoration:none;
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>RANDOM GEN · 完整使用说明</h1>
+  <p>本地二次元提示词生成器 · 角色卡 / 场景锁定 / NSFW 标签 / 中文转词 / ComfyUI 一键出图</p>
+  <div class="quick">
+    <a class="em" href="index.html">← 返回生成器</a>
+    <a href="环境自检.html" target="_blank" rel="noopener">🔍 环境自检</a>
+    <a href="role-studio/index.html" target="_blank" rel="noopener">🎭 角色工坊</a>
+    <a href="workshop/index.html" target="_blank" rel="noopener">⚒ 提示词工坊</a>
+  </div>
+  <p style="margin:12px auto 0;max-width:720px;font-size:14px;font-weight:800;color:#1a1a1a;background:rgba(255,255,255,.92);border-radius:12px;padding:12px 16px;line-height:1.55;text-align:left">
+    <strong style="font-weight:900">重要说明：</strong>Stable Diffusion / ComfyUI 的出图链路与本工具是分开的。本工具<strong>不能</strong>代替你在 SD 里「一键完成全部画图流程」的完整替代品；它负责生成、优化提示词，并在本机 ComfyUI 已运行时把任务推入队列。请仍以手动检查提示词与模板为准，把本工具当作辅助加速器。
+  </p>
+  <p style="margin-top:14px;font-size:12.5px;opacity:.85">
+    本机服务常用地址：生成器
+    <code style="background:rgba(0,0,0,.15);border-color:transparent;color:#fff">http://localhost:8777/index.html</code>
+    · 环境自检
+    <code style="background:rgba(0,0,0,.15);border-color:transparent;color:#fff">http://localhost:8777/环境自检.html</code>
+    · 角色工坊
+    <code style="background:rgba(0,0,0,.15);border-color:transparent;color:#fff">http://localhost:8777/role-studio/index.html</code>
+  </p>
+</div>
+
+<div class="wrap">
+
+  <!-- 目录 -->
+  <div class="toc" id="toc">
+    <h2>目录</h2>
+    <ol>
+      <li><a href="#s1">这是什么 / 怎么打开</a></li>
+      <li><a href="#s2">环境自检 · 角色工坊 · 提示词工坊</a></li>
+      <li><a href="#s3">顶栏：底模、夜灯、新建角色</a></li>
+      <li><a href="#s4">左侧 · 角色来源</a></li>
+      <li><a href="#s5">左侧 · 基本设定</a></li>
+      <li><a href="#s6">左侧 · 画师</a></li>
+      <li><a href="#s7">左侧 · 场景自选</a></li>
+      <li><a href="#s8">左侧 · 服饰</a></li>
+      <li><a href="#s9">左侧 · NSFW 标签区</a></li>
+      <li><a href="#s10">右侧 · 中文转提示词</a></li>
+      <li><a href="#s11">右侧 · 提示词结果与导出</a></li>
+      <li><a href="#s12">右侧 · 仓库与存档</a></li>
+      <li><a href="#s13">右侧 · 生成与 ComfyUI</a></li>
+      <li><a href="#s14">右侧 · 大模型设置</a></li>
+      <li><a href="#s15">常见问题与注意</a></li>
+      <li><a href="#s16">多分辨率模板与多选入队</a></li>
+      <li><a href="#s17">参考图识图（中文区）</a></li>
+      <li><a href="#s18">功能总览速查（左右栏）</a></li>
+    </ol>
+  </div>
+
+  <!-- 1 -->
+  <div class="card" id="s1">
+    <h2>1. 这是什么 / 怎么打开</h2>
+    <p><strong>RANDOM GEN</strong> 是在浏览器里本地运行的二次元 AI 绘图<strong>提示词生成器</strong>。它根据你选的角色、场景、标签等，拼出 Positive / Negative 英文提示词，也可提交到本机 <strong>ComfyUI</strong> 直接出图。</p>
+    <ul>
+      <li>不上传数据到远程服务器（大模型优化除外，需你自己填 API）。</li>
+      <li>清水内容默认可用；成人内容需点顶栏「夜灯」确认后解锁。</li>
+      <li>纯前端即可双击使用；连 Comfy / 自动写回存档时建议用启动脚本。</li>
+    </ul>
+    <h3>两种打开方式</h3>
+    <table>
+      <tr><th>方式</th><th>怎么做</th><th>适合</th></tr>
+      <tr>
+        <td>双击 <code>index.html</code><br>或 <code>打开生成器.bat</code></td>
+        <td>有浏览器即可，地址栏是 <code>file://…</code></td>
+        <td>只生成提示词、不连 Comfy</td>
+      </tr>
+      <tr>
+        <td>双击 <code>启动生成器.bat</code></td>
+        <td>起本地服务（默认端口 8777），自动开浏览器<br>地址形如 <code>http://localhost:8777/index.html</code></td>
+        <td>提交 Comfy、存档自动同步、大模型配置</td>
+      </tr>
+    </table>
+    <div class="note">
+      <strong>必须整包使用。</strong>只复制一个 <code>index.html</code> 会缺 <code>assets/</code> 脚本，功能几乎全废。换电脑请拷整个项目文件夹。
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <div class="card" id="s2">
+    <h2>2. 环境自检 · 角色工坊 · 提示词工坊</h2>
+    <div class="grid">
+      <div class="box">
+        <strong>🔍 环境自检</strong>
+        <p>文件：项目根目录 <code>环境自检.html</code></p>
+        <p>地址：<a href="环境自检.html" target="_blank"><code>http://localhost:8777/环境自检.html</code></a></p>
+        <p>只读检测：浏览器是否可用、localStorage 是否正常、当前有多少条历史/收藏/角色卡、存档落在哪个「格子」。换电脑或打不开时先看这里。</p>
+      </div>
+      <div class="box">
+        <strong>🎭 角色工坊 ROLE STUDIO</strong>
+        <p>目录：<code>role-studio/</code></p>
+        <p>地址：<a href="role-studio/index.html" target="_blank"><code>http://localhost:8777/role-studio/index.html</code></a></p>
+        <p>专门管理角色卡库（预设 + 自建）、搜索筛选、按角色生成提示词、写情境短篇。与主生成器共用词库与引擎，角色卡 JSON 可互通。</p>
+      </div>
+      <div class="box">
+        <strong>⚒ 提示词工坊</strong>
+        <p>目录：<code>workshop/</code>，顶栏也可点「工坊」。</p>
+        <p>大型标签库 / 配方库、中文口语转提示词等辅助工具，与主界面互补。</p>
+      </div>
+      <div class="box">
+        <strong>📖 本说明页</strong>
+        <p>文件：项目根目录 <code>tutorial.html</code>（就是本页）。</p>
+        <p>生成器顶栏「说明」也会打开本页。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <div class="card" id="s3">
+    <h2>3. 顶栏：底模、夜灯、新建角色</h2>
+    <h3>底模下拉</h3>
+    <p>决定<strong>画质词 / 负面词写法</strong>（不是 Comfy 里实际加载哪个 .safetensors 文件的唯一来源，但部分选项会带推荐 checkpoint 名）。</p>
+    <ul>
+      <li>系列风格：Animagine XL、Illustrious（光辉）、Pony Diffusion、NoobAI-XL</li>
+      <li>具体 checkpoint 选项：如 waiIllustrious v140/v160/v170、Illustrious-XL v1.1、cocoStyle NoobAI 等</li>
+    </ul>
+    <p>切换底模后，已生成的提示词会按新底模的质量词规则重写一遍。</p>
+    <div class="note">
+      <strong>温馨提示 · 角色卡自动切底模：</strong>
+      若自定义 / 预设角色卡写了推荐底模（<code>preferredCkpt</code> / <code>preferredModel</code>），
+      在左侧选中该卡时会同时：
+      <ul style="margin:6px 0 0">
+        <li>下方 Comfy「底模 Checkpoint」自动选到对应文件（本机列表里有的话）</li>
+        <li>顶栏「底模」下拉也会自动切到匹配的质量词方案（例如双叶 → waiIllustrious v140）</li>
+      </ul>
+      这样提示词写法与实际出图 checkpoint 不容易各用各的。无推荐字段的卡不会强行改你当前底模。
+    </div>
+
+    <h3>夜灯（清水 / 成人）</h3>
+    <p>顶栏灯泡按钮：</p>
+    <ul>
+      <li><span class="tag ok">清水</span>：默认。不出现成人标签、体位、题材包等。</li>
+      <li><span class="tag nsfw">夜灯点亮</span>：首次需确认；解锁后左侧出现「标签」分区（体位类别、题材包、内容标签、动作自选），生成走 NSFW 逻辑与互斥过滤。</li>
+    </ul>
+    <p>解锁状态会记在浏览器本地（<code>randgen_unlock_nsfw</code>）。</p>
+
+    <h3>其他顶栏入口</h3>
+    <ul>
+      <li><strong>说明</strong> → 本页</li>
+      <li><strong>工坊</strong> → 提示词工坊</li>
+      <li><strong>＋</strong> → 新建自定义角色卡（弹窗编辑外貌 / 默认服饰等）</li>
+    </ul>
+  </div>
+
+  <!-- 4 -->
+  <div class="card" id="s4">
+    <h2>4. 左侧 · 角色来源</h2>
+    <p>决定「画谁」。可以不选（纯随机外貌），也可以指定一张或多张角色卡。</p>
+    <ul>
+      <li><strong>选择角色</strong>：打开角色面板，按作品 IP、性别、关键词搜索；点选卡加入「已选」。</li>
+      <li><strong>随机抽卡</strong>：每次生成从卡池里按筛选条件随机抽，数量跟出场人数相关。</li>
+      <li><strong>预设 / 自定义</strong>：内置大量二次元角色；也可新建卡（含 LoRA 名、强度、推荐底模等）。</li>
+      <li><strong>清空选择</strong>：取消所有已选卡。</li>
+    </ul>
+    <div class="note">
+      <strong>单卡注意：</strong>只选 1 张角色卡时，程序用「预设补全」路径拼提示词。场景场所等已与配置明细对齐；生成后请以右侧 <strong>POSITIVE</strong> 全文为准确认是否含地点等词。
+    </div>
+    <p>部分角色（如「双叶」）会在提示词开头固定触发词，并尽量自动带上角色 LoRA 与推荐底模。</p>
+  </div>
+
+  <!-- 5 -->
+  <div class="card" id="s5">
+    <h2>5. 左侧 · 基本设定</h2>
+    <ul>
+      <li><strong>角色性别</strong>：随机 / 女 / 男 / 扶她。已选角色卡时会按卡的性别对齐，并提示。</li>
+      <li><strong>出场构成（夜灯后）</strong>：男人数、女人数分开选，用于多人 NSFW 场景人数与标签一致性。</li>
+      <li>清水模式通常按单人逻辑处理，人数选择以界面实际显示为准。</li>
+    </ul>
+  </div>
+
+  <!-- 6 -->
+  <div class="card" id="s6">
+    <h2>6. 左侧 · 画师</h2>
+    <p>可选一位或多位画师风格标签（最多约 6 位），选中后<strong>全部追加</strong>进提示词。可按分类筛选、搜索、「选当前整组」。</p>
+    <p>不选则按画风预设或随机画风填充。</p>
+  </div>
+
+  <!-- 7 -->
+  <div class="card" id="s7">
+    <h2>7. 左侧 · 场景自选</h2>
+    <p>每一项默认是「🎲 随机」；点选某个 chip 即<strong>锁定</strong>该项，再点一次取消锁定。</p>
+    <table>
+      <tr><th>项</th><th>作用</th></tr>
+      <tr><td>场所</td><td>地点背景，如地下车库、海边沙滩、春日樱花大道等。锁定后应出现在 POSITIVE 的英文地点描述中。</td></tr>
+      <tr><td>时间光线</td><td>光照与时段，如书桌灯、黄昏逆光、篝火等。</td></tr>
+      <tr><td>氛围</td><td>空气感、气味、心理氛围等描述的英文对应。</td></tr>
+      <tr><td>构图镜头</td><td>全身、特写、鸟瞰、过肩等。</td></tr>
+      <tr><td>行为姿态</td><td>清水向姿态/行为倾向（偏叙事；英文 tag 能力弱于场所光线）。</td></tr>
+      <tr><td>情绪基调</td><td>情绪色彩，多用于中文情境/明细。</td></tr>
+      <tr><td>眼睛特效</td><td>特殊瞳效等（若词库有对应英文会写入）。</td></tr>
+    </table>
+    <p><strong>✕ 清空场景自选</strong>：全部恢复随机。</p>
+    <div class="note">
+      锁定场景后请重新点「生成提示词」。只看「本次配置明细」不够，务必核对 POSITIVE 里是否出现对应英文（如 <code>underground parking garage</code>、<code>cherry blossom avenue</code>）。
+    </div>
+  </div>
+
+  <!-- 8 -->
+  <div class="card" id="s8">
+    <h2>8. 左侧 · 体型自选 · 服饰</h2>
+
+    <h3>体型自选（人生组图）</h3>
+    <p>在「衣着」上方。用于同一角色从<strong>小画到大</strong>的系列图，不选则随机身材。</p>
+    <table>
+      <tr><th>档位</th><th>说明</th></tr>
+      <tr><td>Q版</td><td>超级变形、头身比极小</td></tr>
+      <tr><td>幼小比例 / 儿童比例</td><td>偏矮、头身比偏大</td></tr>
+      <tr><td>少年少女</td><td>青少年比例</td></tr>
+      <tr><td>青年标准 / 成人匀称</td><td>成年正常体型</td></tr>
+      <tr><td>成人丰满 / 成人高大 / 大体型 / 健壮肌肉</td><td>成熟或偏大体型</td></tr>
+    </table>
+    <ul>
+      <li>点选 = 锁定该档，英文体型 tag 写入 POSITIVE</li>
+      <li>再点同一档：权重 <code>★</code>（约 1.2）→ <code>★★</code>（约 1.5）→ 取消</li>
+      <li>「✕ 清空体型锁定」恢复随机</li>
+    </ul>
+    <div class="note">组图技巧：固定同一角色卡，只切换体型档依次生成，即可得到「Q版→幼小→少年→成人…」一组成长向画面。</div>
+
+    <h3>服饰</h3>
+    <ul>
+      <li><strong>衣着状态</strong>：默认 / 正常着衣 / 半脱 / 露胸 / 全裸等（全裸、半脱等主要在夜灯 NSFW 下完整生效）。</li>
+      <li><strong>服装</strong>：保留角色原设、随机换装、或指定成套服饰（兔女郎、JK、女仆等）。</li>
+    </ul>
+    <p>预设角色卡通常把「外貌 core」与「原设服装 outfit」分开，换装/全裸时可以剥掉或替换服装段。</p>
+  </div>
+
+  <!-- 9 NSFW -->
+  <div class="card" id="s9">
+    <h2>9. 左侧 · NSFW 标签区 <span class="tag nsfw">需夜灯</span></h2>
+    <div class="warn">以下整区仅在顶栏夜灯开启后显示。请仅在合法、自愿、成年人的前提下使用。</div>
+
+    <h3 class="nsfw">9.1 体位类别</h3>
+    <p>下拉限制本次体位池的大类，避免完全随机飘到不想要的方向：</p>
+    <ul>
+      <li>🎲 随机体位（不限制）</li>
+      <li>正面位（面对面）</li>
+      <li>后入位（背后）</li>
+      <li>骑乘位（女上）</li>
+      <li>口交位（舔吮）</li>
+    </ul>
+    <p>引擎会按物理状态（束缚、口塞、平胸等）继续过滤「画不出来」的组合。</p>
+
+    <h3 class="nsfw">9.2 题材包</h3>
+    <p>约 30 类主题。点击 = 勾选必出；再点可在权重 ★（约 1.2）/ ★★（约 1.5）间循环。整组英文 tag 注入提示词。</p>
+    <p>部分重口 / 特殊题材默认不参与「随机补全」，只有你显式勾选才会生效。</p>
+
+    <h3 class="nsfw">9.3 内容标签</h3>
+    <p>大量细项标签（界面提示约数百项），按大组折叠。用法与题材包类似：</p>
+    <ul>
+      <li>点一下：勾选，该标签英文必出</li>
+      <li>再点：提高权重 ★ / ★★</li>
+      <li>再点：取消</li>
+    </ul>
+    <p>工具按钮：全选 / 清空 / 反选。</p>
+    <p><strong>标签方案</strong>：给当前勾选（含权重）起名保存，之后一键载入；可删除方案。</p>
+    <p>引擎会根据人数、性别、是否单人、是否勾选非人等做互斥过滤（例如口球与口交不同时成立、单人不会抽需要第二人的句子等）。</p>
+
+    <h3 class="nsfw">9.4 动作自选（法典库）</h3>
+    <p>搜索内置动作法典，点选后该动作的<strong>整组加权 tag 必出</strong>。与当前出场人数不符的会自动跳过；百合等前提会做指代剥离。</p>
+    <p>已选动作显示在下方 chips，可逐个取消或「清空已选」。</p>
+
+    <h3 class="nsfw">9.5 NSFW 生成时引擎还会自动做的事</h3>
+    <ul>
+      <li>道具 / 束缚 / 口部器具等按标签与状态抽取，并更新「物理事实」</li>
+      <li>体位、动作、台词、体液等在事实约束下抽取，减少矛盾组合</li>
+      <li>单人 / 双人 / 群交、女女、匿名男等分支使用不同词池</li>
+      <li>负面词在全裸与着衣时策略不同（着衣时不会用「脱掉衣服」类负面硬怼服装）</li>
+    </ul>
+  </div>
+
+  <!-- 10 -->
+  <div class="card" id="s10">
+    <h2>10. 右侧 · 中文 → 提示词</h2>
+    <ul>
+      <li>文本框默认较大，可用右下角拖拽<strong>横向 + 纵向</strong>继续放大。</li>
+      <li><strong>仅中文</strong>：本地规则转换；若启用大模型则走 API。</li>
+      <li><strong>仅参考图</strong>：须启用大模型；分析服装（上装/下装/袜/鞋/配色）、眼神表情、姿势动作、背景、光影。</li>
+      <li><strong>图 + 文</strong>：以图为主，中文作辅助需求。</li>
+      <li><strong>转成提示词 / 大模型再优化 / 同步到当前</strong>：转换结果写入 Positive / Negative。</li>
+    </ul>
+    <p>角色触发词始终以左侧「角色来源」为准并置顶，不因中文名覆盖角色卡。</p>
+  </div>
+
+  <!-- 11 -->
+  <div class="card" id="s11">
+    <h2>11. 右侧 · 提示词结果与导出</h2>
+    <ul>
+      <li><strong>POSITIVE / NEGATIVE</strong>：可直接编辑，再复制或提交 Comfy。</li>
+      <li><strong>token 估算</strong>：按 CLIP 大致估算；常见上限约 225。超出部分在真实出图时可能被静默截断。</li>
+      <li><strong>裁到 225</strong>：勾选后自动裁掉低价值词以贴近上限。</li>
+      <li><strong>复制 / 复制负面词</strong></li>
+      <li><strong>收藏</strong>：写入仓库收藏夹</li>
+      <li><strong>导出 MD / CSV / PNG</strong>：Markdown 代码块、表格行、或把提示词做成图片卡片</li>
+      <li><strong>本次配置明细</strong>：展开后可看角色与场景各字段；点 🎲 可只重掷某一项再重拼提示词</li>
+    </ul>
+    <div class="note">明细与 POSITIVE 在修过单卡路径后应对齐。若仍不一致，以 POSITIVE 为准并重新生成。</div>
+  </div>
+
+  <!-- 12 -->
+  <div class="card" id="s12">
+    <h2>12. 右侧 · 仓库与存档</h2>
+    <ul>
+      <li><strong>历史</strong>：每次生成可记入历史列表，可点回载入。</li>
+      <li><strong>收藏</strong>：手动收藏的条目。</li>
+      <li><strong>导出 JSON / TXT</strong>：导出当前仓库内容。</li>
+      <li><strong>清空</strong>：清空列表（慎用）。</li>
+      <li><strong>↓ 备份全部存档</strong>：历史 + 收藏 + 自建角色卡 + 解锁状态等，换机用。</li>
+      <li><strong>↑ 恢复存档</strong>：选回备份的 JSON。</li>
+      <li><strong>💾 写回存档文件</strong>：生成 <code>store.js</code>，拖进项目 <code>存档/</code> 覆盖，即可随文件夹搬家（双击 file 模式尤其有用）。</li>
+    </ul>
+    <p><code>file://</code> 与 <code>http://localhost</code> 的存档互不通用（浏览器按来源隔离）。换打开方式或换浏览器时，用备份/写回文件迁移。</p>
+  </div>
+
+  <!-- 13 -->
+  <div class="card" id="s13">
+    <h2>13. 右侧 · 生成与 ComfyUI</h2>
+    <h3>生成</h3>
+    <ul>
+      <li><strong>🎲 生成提示词</strong>：按当前全部设定生成一组。</li>
+      <li><strong>⚡ 批量生成 10 组</strong>：连续生成多组（便于挑）。</li>
+      <li><strong>随机种子 seed</strong>：填同一数字 + 相同配置可复现同一套提示词；留空则每次随机。</li>
+      <li><strong>常驻负面词</strong>：每次自动追加到 Negative 末尾。</li>
+    </ul>
+    <h3>ComfyUI 一键出图</h3>
+    <p>需要：本机 ComfyUI 已运行，且本页用 <strong>启动生成器.bat</strong>（http 模式）打开。</p>
+    <ul>
+      <li><strong>基础配置（可多选）</strong>：勾选 <code>comfy-templates/</code> 下多个模板；一次提交会按「提示词组 × 模板」全部入队。改模板文件后请重启生成器服务。</li>
+      <li><strong>ComfyUI 地址</strong>：默认 <code>http://127.0.0.1:8188</code>。</li>
+      <li><strong>底模 Checkpoint / 角色 LoRA / 强度</strong>：可从本机 Comfy 扫描列表；选角色卡时常自动填入卡上的 LoRA 与强度。</li>
+      <li>当前界面为<strong>单个</strong>角色 LoRA + <strong>一个</strong>强度（模型与 CLIP 强度写入时相同）。多 LoRA 节点需在模板里预置，不能在界面随意加减行。</li>
+      <li><strong>出图编号前缀、批量张数、提交范围、种子策略</strong>等按面板说明设置。</li>
+      <li><strong>▶ 提交到 ComfyUI 并开始画</strong>：把当前提示词填进模板并入队。</li>
+      <li><strong>↓ 下载工作流 JSON</strong>：不直接提交，下载后在 Comfy 里手动 Load。</li>
+    </ul>
+    <div class="note">本程序<strong>不</strong>直连 Automatic1111 / Forge 等 SD WebUI，那些工具请复制提示词手动粘贴。</div>
+  </div>
+
+  <!-- 14 -->
+  <div class="card" id="s14">
+    <h2>14. 右侧 · 大模型设置</h2>
+    <p>用于「中文 → 提示词」的再优化，可选。</p>
+    <ul>
+      <li>启用开关、API 地址（OpenAI 兼容）、API Key、模型名</li>
+      <li>保存到 <code>config/llm.json</code>（需 http 模式启动）</li>
+    </ul>
+    <p>DeepSeek、硅基流动、月之暗面等兼容接口一般都能用。不启用时仅本地规则转换。</p>
+  </div>
+
+  <!-- 15 -->
+  <div class="card" id="s15">
+    <h2>15. 常见问题与注意</h2>
+    <h3>场景选了却不出对应词？</h3>
+    <p>请确认：已重新点生成；看的是 POSITIVE 不是只看明细；已使用含「场景锁定修复」的版本；token 未严重超限被裁光。单卡路径已修复为尊重场所/光线/构图/氛围及明细中的体位、体液、道具等。</p>
+
+    <h3>为什么明细和提示词曾经不一致？</h3>
+    <p>只选一张角色卡时会走预设补全路径，旧版会重抽背景。新版会优先用场景自选与 makeScene 结果，并强制把缺失的英文地点等补回 POSITIVE。</p>
+
+    <h3>提示词很长但图里没体现？</h3>
+    <p>模型侧 CLIP 有效长度有限（约 225 token）；角色与动作权重常压过背景。可减少标签、给地点加权重，或拆成多次生成。</p>
+
+    <h3>双击 HTML 无法提交 Comfy？</h3>
+    <p>file 协议下无法按设计请求本机 API。请用 <code>启动生成器.bat</code>。</p>
+
+    <h3>换电脑历史没了？</h3>
+    <p>用仓库「备份全部存档」或「写回存档文件」，把整个项目文件夹一起带走；新环境打开后按说明恢复。</p>
+
+    <h3>推荐最短流程</h3>
+    <ol>
+      <li><code>启动生成器.bat</code></li>
+      <li>（可选）需要成人内容 → 点夜灯</li>
+      <li>选角色卡或保持随机</li>
+      <li>锁定场所等场景项</li>
+      <li>需要时勾选 NSFW 标签 / 题材 / 动作</li>
+      <li>生成提示词 → 检查 POSITIVE</li>
+      <li>配置 Comfy 地址与模板 → 提交出图</li>
+    </ol>
+  </div>
+
+</div>
+
+
+  <!-- 16 -->
+  <div class="card" id="s16">
+    <h2>16. 多分辨率模板与多选入队</h2>
+    <p>项目 <code>comfy-templates/</code> 内除 <code>base.json</code> / <code>simple.json</code> 外，还提供竖屏、横屏、方图多种分辨率工作流（如 1024×1536、832×1216、1536×1024、1024×1024 等）。</p>
+    <ul>
+      <li>在「生成」区以<strong>勾选列表</strong>选择一个或多个模板。</li>
+      <li>提交时每个模板会单独加载并分别入队；不再只生效「最后一个」。</li>
+      <li>例：1 组提示词 × 3 模板 = 3 个任务；批量 10 组 × 2 模板 = 20 个任务。</li>
+      <li>含手部 Detailer 的模板在「每组多张」时会自动拆成多个 batch=1 任务，避免 Impact Pack 报错。</li>
+    </ul>
+  </div>
+
+  <!-- 17 -->
+  <div class="card" id="s17">
+    <h2>17. 参考图识图（中文区）</h2>
+    <ul>
+      <li>上传区域在「中文 → 提示词」卡片内，圆角虚线框，支持预览与清除。</li>
+      <li>原图建议不超过 20MB（上传后会自动压缩到约 1536 边长再送大模型）；走 OpenAI 兼容的多模态 <code>image_url</code> 格式。</li>
+      <li>模型需支持视觉（如部分多模态接口）；纯文本模型会失败，请换模型名。</li>
+      <li>输出仍为英文 danbooru 风格标签，角色 core 置顶。</li>
+    </ul>
+  </div>
+
+  <!-- 18 -->
+  <div class="card" id="s18">
+    <h2>18. 功能总览速查（左右栏）</h2>
+    <h3>左侧</h3>
+    <table>
+      <tr><th>区块</th><th>要点</th></tr>
+      <tr><td>角色来源</td><td>预设 / 自定义卡；单卡补全；可选自动带 LoRA 与推荐底模</td></tr>
+      <tr><td>基本设定</td><td>性别、人数（夜灯后更完整）</td></tr>
+      <tr><td>画师</td><td>多选画师风格标签</td></tr>
+      <tr><td>场景自选</td><td>场所 / 光线 / 氛围 / 构图 / 姿态 / 情绪 / 眼睛特效</td></tr>
+      <tr><td>体型自选</td><td>人生组图档位与权重</td></tr>
+      <tr><td>服饰</td><td>衣着状态与成套服装</td></tr>
+      <tr><td>标签（夜灯）</td><td>体位、题材包、内容标签、动作法典</td></tr>
+    </table>
+    <h3>右侧</h3>
+    <table>
+      <tr><th>区块</th><th>要点</th></tr>
+      <tr><td>中文 → 提示词</td><td>大输入框、参考图、本地/大模型转换</td></tr>
+      <tr><td>提示词结果</td><td>编辑、复制、收藏、导出、token 裁剪</td></tr>
+      <tr><td>仓库</td><td>历史、收藏、备份与写回 store.js</td></tr>
+      <tr><td>生成</td><td>随机/批量、多模板 Comfy 入队、底模与 LoRA</td></tr>
+      <tr><td>大模型设置</td><td>API、Key、模型名 → config/llm.json</td></tr>
+    </table>
+  </div>
+
+
+<p class="foot">RANDOM GEN · tutorial.html · 全部功能在本地浏览器运行 · 18+ 内容仅供成年人</p>
+<a class="back-top" href="#toc">回目录</a>
+
+</body>
+</html>

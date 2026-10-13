@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROLE STUDIO · 角色卡与情境工坊</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="mode-sfw">
+
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">◈</span>
+    <div class="brand-text">
+      <h1>ROLE STUDIO</h1>
+      <p>角色卡库 / 情境短篇工坊</p>
+    </div>
+  </div>
+
+  <div class="model-pick">
+    <span class="mp-label">底模</span>
+    <select id="modelPick">
+      <option value="animagine">Animagine XL 3.x</option>
+      <option value="illustrious">Illustrious（光辉）</option>
+      <option value="pony">Pony Diffusion V6</option>
+      <option value="noobai">NoobAI-XL</option>
+      <option value="wai_illu_v170">waiIllustrious SDXL v170</option>
+      <option value="wai_illu_v160">waiIllustrious SDXL v160</option>
+      <option value="wai_illu_v140">waiIllustrious SDXL v140</option>
+      <option value="illu_xl_v11">Illustrious-XL v1.1</option>
+      <option value="illu_xl10_v10">illustriousXL10 v10</option>
+      <option value="coco_noobai_v70">cocoStyle NoobAI-XL v70</option>
+    </select>
+  </div>
+
+  <button type="button" class="bulb" id="bulbBtn" title="夜灯：点亮后开启成人内容" aria-pressed="false">
+    <svg class="bulb-ico" viewBox="0 0 24 24" width="19" height="19" aria-hidden="true">
+      <path d="M12 3.2c-3.5 0-6.2 2.7-6.2 6 0 2.2 1.1 3.7 2.2 5 .7.8 1.2 1.6 1.3 2.6h5.4c.1-1 .6-1.8 1.3-2.6 1.1-1.3 2.2-2.8 2.2-5 0-3.3-2.7-6-6.2-6z"
+        fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+      <path d="M9.6 19.6h4.8M10.4 21.4h3.2" fill="none" stroke="currentColor"
+        stroke-width="1.5" stroke-linecap="round"/>
+      <path class="bulb-ray" d="M12 0.6v1.4M3.6 4.2l1 1M20.4 4.2l-1 1" fill="none" stroke="currentColor"
+        stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <span class="bulb-txt" id="bulbTxt">清水</span>
+  </button>
+</header>
+
+<nav class="pagenav" id="pageNav">
+  <button type="button" class="page-tab is-active" data-page="chars">角色库 <span class="badge" id="charCount">0</span></button>
+  <button type="button" class="page-tab" data-page="story">情境子页</button>
+</nav>
+
+<!-- ============ 角色库（内置预设 + 我的角色） ============ -->
+<section class="page" id="pageChars">
+  <div class="lib-layout">
+
+    <div class="card lib-main">
+      <div class="card-head">
+        <h2>角色库</h2>
+        <div class="card-actions">
+          <button type="button" class="mini-btn" id="btnRandomChar">🎲 随机一个</button>
+          <button type="button" class="mini-btn" id="btnNewChar">＋ 新建卡</button>
+          <button type="button" class="mini-btn" id="btnRandomFull">＋ 随机生成一张</button>
+          <button type="button" class="mini-btn" id="btnExportChars">导出 JSON</button>
+          <button type="button" class="mini-btn" id="btnImportChars">导入卡库</button>
+          <input type="file" id="importCharsFile" accept=".json,application/json" hidden>
+        </div>
+      </div>
+      <p class="tip" id="storeEnvTip"></p>
+
+      <div class="lib-source" id="libSource">
+        <button type="button" class="src-btn is-active" data-src="all">全部 <span class="src-n" id="nAll">0</span></button>
+        <button type="button" class="src-btn" data-src="preset">内置预设 <span class="src-n" id="nPreset">0</span></button>
+        <button type="button" class="src-btn" data-src="mine">我的角色 <span class="src-n" id="nMine">0</span></button>
+      </div>
+
+      <div class="lib-toolbar">
+        <div class="lib-search-wrap">
+          <span class="lib-search-ico">⌕</span>
+          <input type="text" id="libSearch" class="lib-search" placeholder="搜索角色名 / 作品 / 外貌标签 / 备注…">
+          <button type="button" class="lib-search-clr" id="libSearchClr" title="清空">✕</button>
+        </div>
+        <div class="lib-dens" id="libDens">
+          <button type="button" class="dens-btn is-active" data-dens="compact" title="紧凑列表">☰ 紧凑</button>
+          <button type="button" class="dens-btn" data-dens="card" title="卡片网格">▦ 卡片</button>
+        </div>
+      </div>
+
+      <div class="lib-filter-row">
+        <label class="ctrl checkbox inline">
+          <input type="checkbox" id="libFemale" checked><span>♀ 女性</span>
+        </label>
+        <label class="ctrl checkbox inline">
+          <input type="checkbox" id="libMale" checked><span>♂ 男性</span>
+        </label>
+        <span class="ps-hit" id="libHit"></span>
+      </div>
+
+      <div class="lib-ip-head">
+        <span class="lib-ip-title">作品筛选</span>
+        <span class="hint" id="libIpHint">点标签只看某个作品，可多选</span>
+      </div>
+      <div class="chips" id="libIpChips" title="按作品筛选（可多选，再点取消）"></div>
+
+      <div class="lib-list" id="charLib"></div>
+      <div id="libEmpty" class="lib-empty" hidden></div>
+    </div>
+
+    <div class="card ps-out-card">
+      <div class="card-head">
+        <h2>随机补全</h2>
+        <div class="card-actions">
+          <button type="button" class="mini-btn" id="psAgain">🎲 再随机一次</button>
+          <button type="button" class="mini-btn" id="psCopy">复制</button>
+          <button type="button" class="mini-btn" id="psToLib">存入我的角色</button>
+        </div>
+      </div>
+
+      <div class="ps-mode-row">
+        <span class="ps-mode" id="psModeTag">当前：SFW 清水</span>
+      </div>
+      <p class="tip" id="psModelHint"></p>
+
+      <label class="ctrl">
+        <span class="ctrl-label">衣着状态 <span class="hint">（默认 = 随机状态）</span></span>
+        <select id="psOutfitState"></select>
+      </label>
+      <label class="ctrl">
+        <span class="ctrl-label">服饰 <span class="hint">（默认 = 角色的原设服装）</span></span>
+        <select id="psOutfitPick"></select>
+      </label>
+      <p class="tip" id="psOutfitHint">不选 = 角色原来的服饰</p>
+
+      <div class="ps-target" id="psTarget">
+        <p class="empty">点左侧任一角色 → 这里会按当前底模生成一条完整提示词</p>
+      </div>
+
+      <h3 class="sub-title mt">本次随机到的内容</h3>
+      <div class="ps-info" id="psInfo"><p class="empty">—</p></div>
+
+      <div class="prompt-box">
+        <label class="prompt-label">Positive</label>
+        <textarea id="psPos" readonly rows="8"></textarea>
+        <label class="prompt-label">Negative</label>
+        <textarea id="psNeg" readonly rows="3"></textarea>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 情境子页 ============ -->
+<section class="page" id="pageStory" hidden>
+  <div class="story-layout">
+
+    <div class="card">
+      <div class="card-head">
+        <h2>出场人物</h2>
+        <div class="card-actions">
+          <button type="button" class="mini-btn" id="btnAddSlot">＋ 加一人</button>
+        </div>
+      </div>
+      <div id="castList"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>场景与设定</h2></div>
+
+      <label class="ctrl">
+        <span class="ctrl-label">模式</span>
+        <select id="stMode">
+          <option value="sfw">SFW 清水</option>
+          <option value="nsfw">NSFW 成人</option>
+        </select>
+      </label>
+
+      <label class="ctrl">
+        <span class="ctrl-label">世界背景</span>
+        <select id="stWorld">
+          <option value="modern">现代都市</option>
+          <option value="campus">校园青春</option>
+          <option value="xianxia">东方幻想 / 仙侠</option>
+          <option value="western">西幻 / 剑与魔法</option>
+          <option value="cyber">赛博朋克</option>
+          <option value="postapoc">末世废土</option>
+          <option value="office">职场 / 商务</option>
+        </select>
+      </label>
+
+      <label class="ctrl">
+        <span class="ctrl-label">画风倾向</span>
+        <select id="stArt">
+          <option value="random">随机</option>
+          <option value="anime">日系二次元</option>
+          <option value="semi">半写实厚涂</option>
+          <option value="real">写实 / 真人</option>
+          <option value="comic">美漫 / 插画</option>
+          <option value="chibi">Q版 / 可爱系</option>
+        </select>
+      </label>
+
+      <div id="stNsfwBox" hidden>
+        <h3 class="sub-title">内容标签 <span class="hint">（66 项 · 不选 = 常规随机）</span></h3>
+        <div class="chips" id="stTagChips"></div>
+        <div class="chip-tools">
+          <button type="button" class="mini-btn" id="stTagAll">全选</button>
+          <button type="button" class="mini-btn" id="stTagNone">清空</button>
+        </div>
+        <p class="tip">按主题分 7 组；重口 / 特殊题材默认不参与随机，勾选后才生效。</p>
+      </div>
+
+      <button type="button" class="btn btn-primary" id="btnGenShort">✍ 生成短篇（50–100 字）</button>
+      <button type="button" class="btn" id="btnGenShortBatch">⚡ 连出 5 段</button>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h2>短篇</h2>
+        <div class="card-actions">
+          <button type="button" class="mini-btn" id="btnShortAgain">🎲 重写</button>
+          <button type="button" class="mini-btn" id="btnShortCopy">复制</button>
+          <button type="button" class="mini-btn" id="btnShortFav">☆ 收藏</button>
+        </div>
+      </div>
+      <div class="story-box" id="shortOut"><p class="empty">选择人物后点击「生成短篇」</p></div>
+      <div class="short-meta"><span id="shortLen">字数 0</span><span id="shortTagInfo"></span></div>
+      <h3 class="sub-title mt">本轮全部结果</h3>
+      <div id="shortBatch"></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 成人内容解锁确认 ============ -->
+<div class="modal" id="unlockModal" hidden>
+  <div class="modal-box unlock-box">
+    <div class="modal-head">
+      <h3>要开夜灯吗</h3>
+      <button type="button" class="op-btn" id="unlockClose">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="unlock-lead">点亮后，角色库与情境文本会加入成人向内容，全尺度具名直描。</p>
+      <ul class="unlock-list">
+        <li>全部内容在本机浏览器生成，不上传任何数据</li>
+        <li>解锁状态只存在你自己的浏览器里，可随时重新锁定</li>
+        <li>内容仅供成年人阅读</li>
+      </ul>
+      <p class="unlock-lead">确认你已成年，并了解以上说明。</p>
+    </div>
+    <div class="modal-foot">
+      <button type="button" class="mini-btn" id="unlockCancel">先不用</button>
+      <button type="button" class="btn btn-primary" id="unlockOk">我已成年，点亮</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 人物卡编辑弹窗 ============ -->
+<div class="modal" id="charModal" hidden>
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="modalTitle">编辑人物卡</h3>
+      <button type="button" class="op-btn" id="modalClose">✕</button>
+    </div>
+    <div class="modal-body">
+      <label class="ctrl">
+        <span class="ctrl-label">显示名（中文正文里用）</span>
+        <input type="text" id="edName" placeholder="如 银狼 / Silver Wolf">
+      </label>
+      <label class="ctrl">
+        <span class="ctrl-label">英文名（可选，只写英文；留空自动从显示名里提取）</span>
+        <input type="text" id="edNameEn" placeholder="如 Silver Wolf">
+      </label>
+      <div class="ctrl-row2">
+        <label class="ctrl">
+          <span class="ctrl-label">作品 / 出处（可选）</span>
+          <input type="text" id="edIp" placeholder="如 星穹铁道">
+        </label>
+        <label class="ctrl">
+          <span class="ctrl-label">性别</span>
+          <select id="edGender">
+            <option value="female">女性</option>
+            <option value="male">男性</option>
+            <option value="futa">扶她</option>
+          </select>
+        </label>
+      </div>
+      <label class="ctrl">
+        <span class="ctrl-label">基础提示词（只写人物外貌，英文标签，逗号分隔）</span>
+        <textarea id="edBase" rows="7" placeholder="(silver wolf honkai star rail), 1girl, silver grey short hair, side ponytail, pink-purple eyes"></textarea>
+      </label>
+      <label class="ctrl">
+        <span class="ctrl-label">默认服饰提示词（可选，英文标签，逗号分隔）</span>
+        <textarea id="edOutfit" rows="3" placeholder="black cropped jacket, white crop top, black short shorts, fishnet socks"></textarea>
+      </label>
+      <p class="tip">基础提示词只写人物本身：角色来源、性别、发型发色、瞳色、身材、配饰、身体特征。服饰写在「默认服饰」里更好：填写后生成时默认穿这一套，「全裸 / 随机换装」会自动脱掉或换掉它（留空则服饰混在基础提示词里，全裸时按词库尽力剥离）。场景、动作、画风、画质词由生成器自动拼在后面，不用写在这里。</p>
+      <label class="ctrl">
+        <span class="ctrl-label">中文外貌备注（可选，会带进短篇）</span>
+        <input type="text" id="edNote" placeholder="如：银灰短发、侧马尾、粉紫瞳">
+      </label>
+    </div>
+    <div class="modal-foot">
+      <button type="button" class="mini-btn" id="edFill">🎲 随机生成一套</button>
+      <button type="button" class="mini-btn" id="edClear">清空</button>
+      <button type="button" class="btn btn-primary" id="edSave">保存</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/data-common.js"></script>
+<script src="assets/js/data-sfw.js"></script>
+<script src="assets/js/data-nsfw.js"></script>
+<script src="assets/js/data-en.js"></script>
+<script src="assets/js/data-workshop-rand.js"></script>
+<script src="assets/js/data-pool-extend.js"></script>
+<script src="assets/js/data-extra.js"></script>
+<script src="assets/js/data-library.js"></script>
+<script src="assets/js/data-r18.js"></script>
+<script src="assets/js/data-nsfw-extend.js"></script>
+<script src="assets/js/data-presets.js"></script>
+<script src="assets/js/data-conflict.js"></script>
+<script src="assets/js/engine.js"></script>
+<script src="../存档/store.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
