@@ -1,0 +1,20 @@
+# 密钥与本地配置
+config/llm.json
+config/upscale-history.json
+
+# 本地存档与输出
+存档/
+upscale-output/
+
+# 放大模型权重（体积大，请自行下载）
+models/upscale_models/*.pth
+models/upscale_models/*.part
+*.part
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+*.log
+node_modules/
+.vscode/
+.idea/
